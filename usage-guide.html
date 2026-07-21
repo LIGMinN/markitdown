@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkItDown 使用说明</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --primary-dark: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --tag-bg: #eff6ff;
+            --tag-text: #2563eb;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 10px; }
+        .hero .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        .hero .version {
+            display: inline-block;
+            margin-top: 12px;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .nav-bar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4px;
+            padding: 8px 20px;
+            overflow-x: auto;
+        }
+        .nav-inner a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .nav-inner a:hover { background: var(--primary-light); color: var(--primary); }
+        section { padding: 40px 0; }
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title .icon { font-size: 1.4rem; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+        }
+        .card p { margin-bottom: 10px; color: var(--text); }
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 18px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin: 12px 0;
+            position: relative;
+        }
+        code {
+            font-family: "SF Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
+        }
+        .inline-code {
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+        .tag {
+            display: inline-block;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 2px;
+        }
+        .tag.green { background: #dcfce7; color: var(--success); }
+        .tag.orange { background: #fef3c7; color: var(--warning); }
+        .tag.red { background: #fee2e2; color: var(--danger); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.92rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        tr:hover td { background: #f1f5f9; }
+        .alert {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin: 14px 0;
+            font-size: 0.92rem;
+        }
+        .alert.info { background: #dbeafe; border-left: 4px solid var(--primary); color: #1e40af; }
+        .alert.warn { background: #fef3c7; border-left: 4px solid var(--warning); color: #92400e; }
+        .alert.danger { background: #fee2e2; border-left: 4px solid var(--danger); color: #991b1b; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .feature-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .feature-item .emoji { font-size: 2rem; margin-bottom: 8px; }
+        .feature-item .label { font-weight: 600; font-size: 0.95rem; }
+        .feature-item .desc { font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; }
+        .arch-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .arch-diagram .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .arch-diagram .box {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .arch-diagram .arrow { color: var(--text-secondary); font-size: 1.2rem; }
+        .toc-list { list-style: none; padding: 0; }
+        .toc-list li { margin-bottom: 6px; }
+        .toc-list a {
+            text-decoration: none;
+            color: var(--text);
+            padding: 4px 0;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+        .toc-list a:hover { color: var(--primary); }
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #94a3b8;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+        .tab-bar { display: flex; gap: 0; margin-bottom: 0; }
+        .tab-btn {
+            padding: 8px 20px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .tab-btn.active { background: var(--card-bg); color: var(--primary); border-bottom: 1px solid var(--card-bg); margin-bottom: -1px; z-index: 1; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-panel {
+            border: 1px solid var(--border);
+            border-radius: 0 0 8px 8px;
+            padding: 20px;
+            background: var(--card-bg);
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>MarkItDown</h1>
+    <p class="subtitle">轻量级文件转 Markdown 工具 — 让 LLM 更好地理解你的文档</p>
+    <span class="version">v0.1.6b2 · Python 3.10+</span>
+</div>
+
+<div class="nav-bar">
+    <div class="nav-inner">
+        <a href="#overview">概览</a>
+        <a href="#install">安装</a>
+        <a href="#cli">命令行</a>
+        <a href="#python-api">Python API</a>
+        <a href="#formats">支持格式</a>
+        <a href="#plugins">插件系统</a>
+        <a href="#ocr-plugin">OCR 插件</a>
+        <a href="#mcp-server">MCP 服务器</a>
+        <a href="#azure">Azure 集成</a>
+        <a href="#docker">Docker</a>
+        <a href="#architecture">架构</a>
+        <a href="#security">安全</a>
+        <a href="#packages">包结构</a>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- 概览 -->
+<section id="overview">
+    <div class="section-title"><span class="icon">📖</span> 项目概览</div>
+    <div class="card">
+        <p>MarkItDown 是由 Microsoft AutoGen 团队开发的轻量级 Python 工具，用于将各种文件格式转换为 Markdown，专为 LLM 和文本分析流水线设计。</p>
+        <p>与 <span class="inline-code">textract</span> 类似，但重点在于保留文档的重要结构和内容（标题、列表、表格、链接等），以 Markdown 形式输出，对 LLM 极其友好且高效省 Token。</p>
+    </div>
+
+    <div class="arch-diagram">
+        <p style="margin-bottom:16px;font-weight:600;color:var(--primary-dark)">转换流程</p>
+        <div class="flow">
+            <span class="box">输入源</span>
+            <span class="arrow">→</span>
+            <span class="box">MarkItDown</span>
+            <span class="arrow">→</span>
+            <span class="box">Converter</span>
+            <span class="arrow">→</span>
+            <span class="box">Markdown 输出</span>
+        </div>
+        <p style="margin-top:14px;font-size:0.85rem;color:var(--text-secondary)">支持：本地文件 · URL · 二进制流 · requests.Response · Data URI · File URI</p>
+    </div>
+
+    <p style="margin-top:16px;font-weight:600;margin-bottom:12px">支持转换的文件类型：</p>
+    <div class="feature-grid">
+        <div class="feature-item"><div class="emoji">📄</div><div class="label">PDF</div><div class="desc">文档与扫描件</div></div>
+        <div class="feature-item"><div class="emoji">📊</div><div class="label">PowerPoint</div><div class="desc">pptx 演示文稿</div></div>
+        <div class="feature-item"><div class="emoji">📝</div><div class="label">Word</div><div class="desc">docx 文档</div></div>
+        <div class="feature-item"><div class="emoji">📈</div><div class="label">Excel</div><div class="desc">xlsx / xls 表格</div></div>
+        <div class="feature-item"><div class="emoji">🖼️</div><div class="label">Image</div><div class="desc">EXIF + OCR</div></div>
+        <div class="feature-item"><div class="emoji">🎵</div><div class="label">Audio</div><div class="desc">EXIF + 语音转写</div></div>
+        <div class="feature-item"><div class="emoji">🌐</div><div class="label">HTML</div><div class="desc">网页内容</div></div>
+        <div class="feature-item"><div class="emoji">📋</div><div class="label">CSV / JSON / XML</div><div class="desc">文本格式</div></div>
+        <div class="feature-item"><div class="emoji">📦</div><div class="label">ZIP</div><div class="desc">迭代包内文件</div></div>
+        <div class="feature-item"><div class="emoji">📺</div><div class="label">YouTube</div><div class="desc">视频字幕</div></div>
+        <div class="feature-item"><div class="emoji">📚</div><div class="label">EPub</div><div class="desc">电子书</div></div>
+        <div class="feature-item"><div class="emoji">📧</div><div class="label">Outlook MSG</div><div class="desc">邮件消息</div></div>
+        <div class="feature-item"><div class="emoji">📓</div><div class="label">Jupyter</div><div class="desc">ipynb 笔记本</div></div>
+        <div class="feature-item"><div class="emoji">🔍</div><div class="label">Bing SERP</div><div class="desc">搜索结果页</div></div>
+        <div class="feature-item"><div class="emoji">📰</div><div class="label">RSS</div><div class="desc">订阅源</div></div>
+        <div class="feature-item"><div class="emoji">🏛️</div><div class="label">Wikipedia</div><div class="desc">百科页面</div></div>
+    </div>
+</section>
+
+<!-- 安装 -->
+<section id="install">
+    <div class="section-title"><span class="icon">⚙️</span> 安装配置</div>
+
+    <div class="card">
+        <h3>前提条件</h3>
+        <p>需要 <span class="inline-code">Python 3.10+</span>，建议使用虚拟环境。</p>
+    </div>
+
+    <div class="card">
+        <h3>创建虚拟环境</h3>
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('venv-tabs', 'venv-std')">标准 Python</button>
+            <button class="tab-btn" onclick="switchTab('venv-tabs', 'venv-uv')">uv</button>
+            <button class="tab-btn" onclick="switchTab('venv-tabs', 'venv-conda')">Conda</button>
+        </div>
+        <div class="tab-panel">
+            <div id="venv-std" class="tab-content active">
+                <pre><code>python -m venv .venv
+source .venv/bin/activate</code></pre>
+            </div>
+            <div id="venv-uv" class="tab-content">
+                <pre><code>uv venv --python=3.12 .venv
+source .venv/bin/activate
+# 注意：后续请使用 uv pip install 而非 pip install</code></pre>
+            </div>
+            <div id="venv-conda" class="tab-content">
+                <pre><code>conda create -n markitdown python=3.12
+conda activate markitdown</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>安装 MarkItDown</h3>
+        <pre><code># 安装全部可选依赖（推荐）
+pip install 'markitdown[all]'
+
+# 从源码安装
+git clone git@github.com:microsoft/markitdown.git
+cd markitdown
+pip install -e 'packages/markitdown[all]'</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>按需安装可选依赖</h3>
+        <table>
+            <thead>
+                <tr><th>选项</th><th>说明</th><th>安装命令</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="tag">all</span></td><td>全部可选依赖</td><td><code>pip install 'markitdown[all]'</code></td></tr>
+                <tr><td><span class="tag">pptx</span></td><td>PowerPoint 文件</td><td><code>pip install 'markitdown[pptx]'</code></td></tr>
+                <tr><td><span class="tag">docx</span></td><td>Word 文件</td><td><code>pip install 'markitdown[docx]'</code></td></tr>
+                <tr><td><span class="tag">xlsx</span></td><td>Excel 文件</td><td><code>pip install 'markitdown[xlsx]'</code></td></tr>
+                <tr><td><span class="tag">xls</span></td><td>旧版 Excel 文件</td><td><code>pip install 'markitdown[xls]'</code></td></tr>
+                <tr><td><span class="tag">pdf</span></td><td>PDF 文件</td><td><code>pip install 'markitdown[pdf]'</code></td></tr>
+                <tr><td><span class="tag">outlook</span></td><td>Outlook 邮件</td><td><code>pip install 'markitdown[outlook]'</code></td></tr>
+                <tr><td><span class="tag">az-doc-intel</span></td><td>Azure 文档智能</td><td><code>pip install 'markitdown[az-doc-intel]'</code></td></tr>
+                <tr><td><span class="tag">az-content-understanding</span></td><td>Azure 内容理解</td><td><code>pip install 'markitdown[az-content-understanding]'</code></td></tr>
+                <tr><td><span class="tag">audio-transcription</span></td><td>音频转写</td><td><code>pip install 'markitdown[audio-transcription]'</code></td></tr>
+                <tr><td><span class="tag">youtube-transcription</span></td><td>YouTube 字幕</td><td><code>pip install 'markitdown[youtube-transcription]'</code></td></tr>
+            </tbody>
+        </table>
+        <p>可以组合安装，例如：<code>pip install 'markitdown[pdf,docx,pptx]'</code></p>
+    </div>
+</section>
+
+<!-- 命令行 -->
+<section id="cli">
+    <div class="section-title"><span class="icon">💻</span> 命令行使用</div>
+
+    <div class="card">
+        <h3>基本用法</h3>
+        <pre><code># 转换文件并输出到标准输出
+markitdown path-to-file.pdf
+
+# 指定输出文件
+markitdown path-to-file.pdf -o document.md
+
+# 管道方式
+cat path-to-file.pdf | markitdown
+
+# 重定向输入
+markitdown < path-to-file.pdf</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>完整参数一览</h3>
+        <table>
+            <thead>
+                <tr><th>参数</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>-v, --version</code></td><td>显示版本号</td></tr>
+                <tr><td><code>-o, --output</code></td><td>输出文件名（不指定则输出到 stdout）</td></tr>
+                <tr><td><code>-x, --extension</code></td><td>提供文件扩展名提示（如从 stdin 读取时）</td></tr>
+                <tr><td><code>-m, --mime-type</code></td><td>提供 MIME 类型提示</td></tr>
+                <tr><td><code>-c, --charset</code></td><td>提供字符编码提示（如 UTF-8）</td></tr>
+                <tr><td><code>-d, --use-docintel</code></td><td>使用 Azure 文档智能（需配合 -e）</td></tr>
+                <tr><td><code>--use-cu</code></td><td>使用 Azure 内容理解（需配合 --cu-endpoint）</td></tr>
+                <tr><td><code>-e, --endpoint</code></td><td>Azure 文档智能 Endpoint</td></tr>
+                <tr><td><code>--cu-endpoint</code></td><td>Azure 内容理解 Endpoint</td></tr>
+                <tr><td><code>--cu-analyzer</code></td><td>内容理解分析器 ID（不指定则自动选择）</td></tr>
+                <tr><td><code>--cu-file-types</code></td><td>限制路由到 CU 的文件类型（逗号分隔）</td></tr>
+                <tr><td><code>-p, --use-plugins</code></td><td>启用第三方插件</td></tr>
+                <tr><td><code>--list-plugins</code></td><td>列出已安装的第三方插件</td></tr>
+                <tr><td><code>--keep-data-uris</code></td><td>保留 data URI（如 base64 图片），默认截断</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>常用示例</h3>
+        <pre><code># 转换 Word 文档
+markitdown report.docx -o report.md
+
+# 使用 Azure 文档智能
+markitdown scan.pdf -d -e "https://your-docintel.cognitiveservices.azure.com"
+
+# 使用 Azure 内容理解
+markitdown report.pdf --use-cu --cu-endpoint "https://your-cu.endpoint"
+
+# 启用插件
+markitdown document.pdf --use-plugins
+
+# 查看已安装插件
+markitdown --list-plugins
+
+# 从标准输入读取，指定文件类型
+cat data.csv | markitdown -x .csv</code></pre>
+    </div>
+</section>
+
+<!-- Python API -->
+<section id="python-api">
+    <div class="section-title"><span class="icon">🐍</span> Python API</div>
+
+    <div class="card">
+        <h3>基本用法</h3>
+        <pre><code>from markitdown import MarkItDown
+
+md = MarkItDown()
+result = md.convert("test.xlsx")
+print(result.markdown)          # Markdown 文本
+print(result.title)             # 文档标题（可选）
+print(result.text_content)      # markdown 的别名（软弃用）</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>多种输入源</h3>
+        <pre><code>from markitdown import MarkItDown
+
+md = MarkItDown()
+
+# 本地文件
+result = md.convert_local("report.pdf")
+
+# URL
+result = md.convert_uri("https://example.com/page.html")
+
+# 二进制流
+with open("data.docx", "rb") as f:
+    result = md.convert_stream(f)
+
+# requests.Response
+import requests
+resp = requests.get("https://example.com/file.pdf")
+result = md.convert_response(resp)
+
+# 通用 convert() 自动识别类型
+result = md.convert("path/to/file.pdf")        # 本地文件
+result = md.convert("https://example.com")      # URL
+result = md.convert(Path("/path/to/file.pdf"))   # Path 对象</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>使用 LLM 描述图片</h3>
+        <pre><code>from markitdown import MarkItDown
+from openai import OpenAI
+
+client = OpenAI()
+md = MarkItDown(
+    llm_client=client,
+    llm_model="gpt-4o",
+    llm_prompt="可选的自定义提示词"
+)
+result = md.convert("example.jpg")
+print(result.markdown)</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>使用 Azure 文档智能</h3>
+        <pre><code>from markitdown import MarkItDown
+
+md = MarkItDown(docintel_endpoint="&lt;document_intelligence_endpoint&gt;")
+result = md.convert("test.pdf")
+print(result.markdown)</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>使用 Azure 内容理解</h3>
+        <pre><code>from markitdown import MarkItDown
+from markitdown.converters import ContentUnderstandingFileType
+
+# 零配置 — 按文件类型自动选择分析器
+md = MarkItDown(cu_endpoint="&lt;content_understanding_endpoint&gt;")
+result = md.convert("report.pdf")    # 文档 → prebuilt-documentSearch
+result = md.convert("meeting.mp4")   # 视频 → prebuilt-videoSearch
+result = md.convert("call.wav")      # 音频 → prebuilt-audioSearch
+
+# 自定义分析器（领域特定字段提取）
+md = MarkItDown(
+    cu_endpoint="&lt;endpoint&gt;",
+    cu_analyzer_id="my-invoice-analyzer",
+)
+result = md.convert("invoice.pdf")
+# 输出包含 YAML front matter，含提取字段
+
+# 限制路由到 CU 的文件类型
+md = MarkItDown(
+    cu_endpoint="&lt;endpoint&gt;",
+    cu_file_types=[ContentUnderstandingFileType.PDF],
+)</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>插件系统</h3>
+        <pre><code>from markitdown import MarkItDown
+
+# 启用插件
+md = MarkItDown(enable_plugins=True)
+result = md.convert("path-to-file.rtf")
+print(result.markdown)
+
+# 禁用内置转换器，仅使用插件
+md = MarkItDown(enable_builtins=False, enable_plugins=True)</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>核心 API 类</h3>
+        <table>
+            <thead>
+                <tr><th>类 / 方法</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>MarkItDown</code></td><td>主类，管理转换器注册和调度</td></tr>
+                <tr><td><code>DocumentConverter</code></td><td>转换器基类，需实现 <code>accepts()</code> 和 <code>convert()</code></td></tr>
+                <tr><td><code>DocumentConverterResult</code></td><td>转换结果，包含 <code>markdown</code> 和可选 <code>title</code></td></tr>
+                <tr><td><code>StreamInfo</code></td><td>文件流元数据（mimetype, extension, charset 等）</td></tr>
+                <tr><td><code>md.convert(source)</code></td><td>通用转换，自动识别输入类型</td></tr>
+                <tr><td><code>md.convert_local(path)</code></td><td>本地文件转换</td></tr>
+                <tr><td><code>md.convert_uri(uri)</code></td><td>URI 转换（http/https/file/data）</td></tr>
+                <tr><td><code>md.convert_stream(stream)</code></td><td>二进制流转换</td></tr>
+                <tr><td><code>md.convert_response(resp)</code></td><td>requests.Response 转换</td></tr>
+                <tr><td><code>md.register_converter()</code></td><td>注册自定义转换器</td></tr>
+                <tr><td><code>md.enable_builtins()</code></td><td>启用内置转换器（默认启用）</td></tr>
+                <tr><td><code>md.enable_plugins()</code></td><td>启用插件转换器</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- 支持格式 -->
+<section id="formats">
+    <div class="section-title"><span class="icon">📂</span> 支持格式与转换器</div>
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>格式</th><th>转换器</th><th>可选依赖</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>PDF</td><td><code>PdfConverter</code></td><td><span class="tag">pdf</span></td><td>pdfminer.six + pdfplumber</td></tr>
+                <tr><td>Word (.docx)</td><td><code>DocxConverter</code></td><td><span class="tag">docx</span></td><td>mammoth + lxml</td></tr>
+                <tr><td>PowerPoint (.pptx)</td><td><code>PptxConverter</code></td><td><span class="tag">pptx</span></td><td>python-pptx</td></tr>
+                <tr><td>Excel (.xlsx)</td><td><code>XlsxConverter</code></td><td><span class="tag">xlsx</span></td><td>pandas + openpyxl</td></tr>
+                <tr><td>Excel (.xls)</td><td><code>XlsConverter</code></td><td><span class="tag">xls</span></td><td>pandas + xlrd</td></tr>
+                <tr><td>图片</td><td><code>ImageConverter</code></td><td>—</td><td>EXIF 元数据 + LLM 描述</td></tr>
+                <tr><td>音频</td><td><code>AudioConverter</code></td><td><span class="tag">audio-transcription</span></td><td>EXIF + 语音转写</td></tr>
+                <tr><td>HTML</td><td><code>HtmlConverter</code></td><td>—</td><td>markdownify</td></tr>
+                <tr><td>CSV</td><td><code>CsvConverter</code></td><td>—</td><td>内置</td></tr>
+                <tr><td>IPYNB</td><td><code>IpynbConverter</code></td><td>—</td><td>Jupyter 笔记本</td></tr>
+                <tr><td>EPUB</td><td><code>EpubConverter</code></td><td>—</td><td>电子书</td></tr>
+                <tr><td>Outlook MSG</td><td><code>OutlookMsgConverter</code></td><td><span class="tag">outlook</span></td><td>olefile</td></tr>
+                <tr><td>ZIP</td><td><code>ZipConverter</code></td><td>—</td><td>迭代包内文件</td></tr>
+                <tr><td>YouTube</td><td><code>YouTubeConverter</code></td><td><span class="tag">youtube-transcription</span></td><td>视频字幕</td></tr>
+                <tr><td>RSS</td><td><code>RssConverter</code></td><td>—</td><td>订阅源</td></tr>
+                <tr><td>Wikipedia</td><td><code>WikipediaConverter</code></td><td>—</td><td>百科页面</td></tr>
+                <tr><td>Bing SERP</td><td><code>BingSerpConverter</code></td><td>—</td><td>搜索结果</td></tr>
+                <tr><td>纯文本</td><td><code>PlainTextConverter</code></td><td>—</td><td>通用兜底</td></tr>
+                <tr><td>Azure 文档智能</td><td><code>DocumentIntelligenceConverter</code></td><td><span class="tag">az-doc-intel</span></td><td>云服务</td></tr>
+                <tr><td>Azure 内容理解</td><td><code>ContentUnderstandingConverter</code></td><td><span class="tag">az-content-understanding</span></td><td>云服务</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- 插件系统 -->
+<section id="plugins">
+    <div class="section-title"><span class="icon">🔌</span> 插件系统</div>
+
+    <div class="card">
+        <h3>插件机制</h3>
+        <p>MarkItDown 支持第三方插件扩展，通过 Python 入口点（entry point）自动发现。插件默认禁用，需显式启用。</p>
+        <pre><code># 查看已安装插件
+markitdown --list-plugins
+
+# 启用插件转换
+markitdown --use-plugins path-to-file.pdf</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>开发自定义插件</h3>
+        <p>1. 实现 <code>DocumentConverter</code> 子类：</p>
+        <pre><code>from markitdown import MarkItDown, DocumentConverter, DocumentConverterResult, StreamInfo
+from typing import BinaryIO, Any
+
+class RtfConverter(DocumentConverter):
+    def accepts(self, file_stream: BinaryIO, stream_info: StreamInfo, **kwargs) -> bool:
+        # 判断是否能处理该文件
+        ...
+
+    def convert(self, file_stream: BinaryIO, stream_info: StreamInfo, **kwargs) -> DocumentConverterResult:
+        # 实现转换逻辑
+        ...</code></pre>
+        <p style="margin-top:16px">2. 在包中导出插件接口：</p>
+        <pre><code># 插件接口版本（目前仅支持 1）
+__plugin_interface_version__ = 1
+
+def register_converters(markitdown: MarkItDown, **kwargs):
+    """MarkItDown 实例创建时被调用，注册转换器"""
+    markitdown.register_converter(RtfConverter())</code></pre>
+        <p style="margin-top:16px">3. 在 <code>pyproject.toml</code> 中声明入口点：</p>
+        <pre><code>[project.entry-points."markitdown.plugin"]
+my_plugin = "my_package_name"</code></pre>
+    </div>
+</section>
+
+<!-- OCR 插件 -->
+<section id="ocr-plugin">
+    <div class="section-title"><span class="icon">🔍</span> OCR 插件 (markitdown-ocr)</div>
+
+    <div class="card">
+        <h3>简介</h3>
+        <p>通过 LLM Vision 从 PDF、DOCX、PPTX、XLSX 中嵌入的图片提取文字。无需额外 ML 库或二进制依赖。</p>
+    </div>
+
+    <div class="card">
+        <h3>安装</h3>
+        <pre><code>pip install markitdown-ocr
+pip install openai  # 或任何 OpenAI 兼容客户端</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>使用方式</h3>
+        <pre><code>from markitdown import MarkItDown
+from openai import OpenAI
+
+md = MarkItDown(
+    enable_plugins=True,
+    llm_client=OpenAI(),
+    llm_model="gpt-4o",
+)
+result = md.convert("document_with_images.pdf")
+print(result.markdown)</code></pre>
+        <div class="alert info">如果未提供 <code>llm_client</code>，插件仍然会加载，但 OCR 功能将被静默跳过，回退到标准内置转换器。</div>
+    </div>
+
+    <div class="card">
+        <h3>支持的转换增强</h3>
+        <div class="grid-2">
+            <div>
+                <p><strong>PDF</strong></p>
+                <ul style="margin-left:20px;margin-top:6px">
+                    <li>按位置提取嵌入图片并 OCR</li>
+                    <li>扫描件自动检测整页 OCR</li>
+                    <li>损坏 PDF 使用 PyMuPDF 回退</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>DOCX / PPTX / XLSX</strong></p>
+                <ul style="margin-left:20px;margin-top:6px">
+                    <li>DOCX：图片 OCR 内联插入</li>
+                    <li>PPTX：支持组合内图片</li>
+                    <li>XLSX：按工作表列出图片</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>OCR 输出格式</h3>
+        <pre><code>*[Image OCR]
+&lt;提取的文字内容&gt;
+[End OCR]*</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>使用 Azure OpenAI</h3>
+        <pre><code>from openai import AzureOpenAI
+
+md = MarkItDown(
+    enable_plugins=True,
+    llm_client=AzureOpenAI(
+        api_key="...",
+        azure_endpoint="https://your-resource.openai.azure.com/",
+        api_version="2024-02-01",
+    ),
+    llm_model="gpt-4o",
+)</code></pre>
+    </div>
+</section>
+
+<!-- MCP 服务器 -->
+<section id="mcp-server">
+    <div class="section-title"><span class="icon">🤖</span> MCP 服务器 (markitdown-mcp)</div>
+
+    <div class="card">
+        <h3>简介</h3>
+        <p>提供轻量级 STDIO / Streamable HTTP / SSE MCP 服务器，暴露一个工具：<code>convert_to_markdown(uri)</code></p>
+        <p>支持 <code>http:</code>、<code>https:</code>、<code>file:</code>、<code>data:</code> URI。</p>
+    </div>
+
+    <div class="card">
+        <h3>安装与启动</h3>
+        <pre><code>pip install markitdown-mcp
+
+# STDIO 模式（默认）
+markitdown-mcp
+
+# Streamable HTTP + SSE 模式
+markitdown-mcp --http --host 127.0.0.1 --port 3001</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>MCP 服务器参数</h3>
+        <table>
+            <thead>
+                <tr><th>参数</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>--http</code></td><td>启用 Streamable HTTP + SSE 传输</td></tr>
+                <tr><td><code>--sse</code></td><td>（已弃用）同 <code>--http</code></td></tr>
+                <tr><td><code>--host</code></td><td>绑定主机（默认 127.0.0.1）</td></tr>
+                <tr><td><code>--port</code></td><td>监听端口（默认 3001）</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Docker 运行</h3>
+        <pre><code>docker build -t markitdown-mcp:latest .
+docker run -it --rm markitdown-mcp:latest
+
+# 挂载本地目录
+docker run -it --rm -v /home/user/data:/workdir markitdown-mcp:latest</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>接入 Claude Desktop</h3>
+        <p>编辑 <code>claude_desktop_config.json</code>：</p>
+        <pre><code>{
+  "mcpServers": {
+    "markitdown": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "markitdown-mcp:latest"
+      ]
+    }
+  }
+}</code></pre>
+        <p style="margin-top:10px">挂载本地目录时：</p>
+        <pre><code>{
+  "mcpServers": {
+    "markitdown": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-v", "/home/user/data:/workdir",
+        "markitdown-mcp:latest"
+      ]
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>调试</h3>
+        <pre><code># 启动 MCP Inspector
+npx @modelcontextprotocol/inspector</code></pre>
+        <p style="margin-top:8px">然后访问 <code>http://localhost:5173/</code>，选择传输方式并连接：</p>
+        <ul style="margin-left:20px;margin-top:6px">
+            <li><strong>STDIO</strong>：传输类型选 STDIO，命令填 <code>markitdown-mcp</code></li>
+            <li><strong>Streamable HTTP</strong>：URL 填 <code>http://127.0.0.1:3001/mcp</code></li>
+            <li><strong>SSE</strong>：URL 填 <code>http://127.0.0.1:3001/sse</code></li>
+        </ul>
+    </div>
+
+    <div class="alert warn">
+        <strong>环境变量：</strong>设置 <code>MARKITDOWN_ENABLE_PLUGINS=true</code> 可在 MCP 服务器中启用插件。
+    </div>
+</section>
+
+<!-- Azure 集成 -->
+<section id="azure">
+    <div class="section-title"><span class="icon">☁️</span> Azure 云服务集成</div>
+
+    <div class="card">
+        <h3>三种模式对比</h3>
+        <table>
+            <thead>
+                <tr><th>能力</th><th>内置转换器</th><th>Azure 文档智能</th><th>Azure 内容理解</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>文档转换</td><td>离线，格式特定</td><td>云端布局提取</td><td>云端多模态提取</td></tr>
+                <tr><td>结构化字段</td><td><span class="tag red">不可用</span></td><td><span class="tag orange">未暴露</span></td><td><span class="tag green">YAML front matter</span></td></tr>
+                <tr><td>自定义分析器</td><td><span class="tag red">不可用</span></td><td><span class="tag orange">不可配置</span></td><td><span class="tag green">支持</span></td></tr>
+                <tr><td>音视频</td><td>基础音频，无视频</td><td><span class="tag red">不支持</span></td><td><span class="tag green">音频 + 视频</span></td></tr>
+                <tr><td>费用</td><td>仅本地计算</td><td>Azure API 计费</td><td>Azure API 计费</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Azure 文档智能</h3>
+        <pre><code># 命令行
+markitdown scan.pdf -d -e "https://your-docintel.cognitiveservices.azure.com"
+
+# Python
+from markitdown import MarkItDown
+md = MarkItDown(docintel_endpoint="https://your-docintel.cognitiveservices.azure.com")
+result = md.convert("scan.pdf")</code></pre>
+        <p style="margin-top:8px;font-size:0.9rem;color:var(--text-secondary)">创建资源：<a href="https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/how-to-guides/create-document-intelligence-resource" style="color:var(--primary)">Azure 文档智能文档</a></p>
+    </div>
+
+    <div class="card">
+        <h3>Azure 内容理解</h3>
+        <pre><code># 命令行
+markitdown report.pdf --use-cu --cu-endpoint "https://your-cu.endpoint"
+
+# Python — 零配置自动选择分析器
+from markitdown import MarkItDown
+md = MarkItDown(cu_endpoint="https://your-cu.endpoint")
+result = md.convert("report.pdf")   # 文档
+result = md.convert("meeting.mp4")  # 视频
+result = md.convert("call.wav")     # 音频</code></pre>
+        <div class="alert info">
+            <strong>费用提示：</strong>每次 CU 路由的 <code>convert()</code> 调用都是计费的 Azure API 调用。使用 <code>cu_file_types</code> 可限制路由到 CU 的格式。
+        </div>
+    </div>
+</section>
+
+<!-- Docker -->
+<section id="docker">
+    <div class="section-title"><span class="icon">🐳</span> Docker 部署</div>
+    <div class="card">
+        <h3>构建与运行</h3>
+        <pre><code># 构建
+docker build -t markitdown:latest .
+
+# 基本使用（标准输入/输出）
+docker run --rm -i markitdown:latest < ~/your-file.pdf > output.md
+
+# MCP 服务器
+docker build -t markitdown-mcp:latest -f packages/markitdown-mcp/Dockerfile .
+docker run -it --rm markitdown-mcp:latest</code></pre>
+    </div>
+    <div class="card">
+        <h3>Dockerfile 说明</h3>
+        <p>基于 <code>python:3.13-slim-bullseye</code>，预装了：</p>
+        <ul style="margin-left:20px;margin-top:6px">
+            <li><code>ffmpeg</code> — 音频处理</li>
+            <li><code>exiftool</code> — EXIF 元数据提取</li>
+            <li><code>markitdown[all]</code> — 全部可选依赖</li>
+            <li><code>markitdown-sample-plugin</code> — 示例插件</li>
+        </ul>
+        <div class="alert warn">Dockerfile 默认以 <code>nobody:nogroup</code> 用户运行，确保最小权限。</div>
+    </div>
+</section>
+
+<!-- 架构 -->
+<section id="architecture">
+    <div class="section-title"><span class="icon">🏗️</span> 项目架构</div>
+
+    <div class="card">
+        <h3>转换器优先级机制</h3>
+        <p>转换器按优先级排序，数值越低越优先尝试：</p>
+        <table>
+            <thead>
+                <tr><th>优先级</th><th>类型</th><th>示例</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>-1.0</code></td><td>插件转换器</td><td>OCR 增强转换器</td></tr>
+                <tr><td><code>0.0</code></td><td>特定格式转换器</td><td>PdfConverter, DocxConverter</td></tr>
+                <tr><td><code>10.0</code></td><td>通用格式转换器</td><td>PlainTextConverter, HtmlConverter</td></tr>
+            </tbody>
+        </table>
+        <div class="alert info">后注册的转换器优先级更高。Azure 转换器（如已配置）会被注册到栈顶，优先于所有内置转换器。</div>
+    </div>
+
+    <div class="card">
+        <h3>文件类型识别</h3>
+        <p>使用 <code>magika</code> 库进行智能文件类型检测，结合扩展名、MIME 类型、URL 等多种提示综合判断。</p>
+        <div class="arch-diagram">
+            <div class="flow">
+                <span class="box">输入流</span>
+                <span class="arrow">→</span>
+                <span class="box">StreamInfo 收集</span>
+                <span class="arrow">→</span>
+                <span class="box">magika 检测</span>
+                <span class="arrow">→</span>
+                <span class="box">多猜测列表</span>
+                <span class="arrow">→</span>
+                <span class="box">逐个尝试 Converter</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>核心依赖</h3>
+        <div class="grid-3">
+            <div>
+                <p><strong>核心依赖</strong></p>
+                <ul style="margin-left:16px;font-size:0.9rem">
+                    <li>beautifulsoup4</li>
+                    <li>requests</li>
+                    <li>markdownify</li>
+                    <li>magika ~=0.6.1</li>
+                    <li>charset-normalizer</li>
+                    <li>defusedxml</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>格式依赖</strong></p>
+                <ul style="margin-left:16px;font-size:0.9rem">
+                    <li>python-pptx</li>
+                    <li>mammoth ~=1.11.0</li>
+                    <li>pandas + openpyxl / xlrd</li>
+                    <li>pdfminer.six / pdfplumber</li>
+                    <li>olefile</li>
+                    <li>lxml</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>可选依赖</strong></p>
+                <ul style="margin-left:16px;font-size:0.9rem">
+                    <li>pydub + SpeechRecognition</li>
+                    <li>youtube-transcript-api</li>
+                    <li>azure-ai-documentintelligence</li>
+                    <li>azure-ai-contentunderstanding</li>
+                    <li>azure-identity</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 安全 -->
+<section id="security">
+    <div class="section-title"><span class="icon">🔒</span> 安全注意事项</div>
+
+    <div class="alert danger">
+        <strong>重要：</strong>MarkItDown 以当前进程权限执行 I/O 操作。与 <code>open()</code> 或 <code>requests.get()</code> 一样，它可以访问进程能访问的所有资源。在不受信任的环境中，务必对输入进行清洗。
+    </div>
+
+    <div class="card">
+        <h3>安全最佳实践</h3>
+        <ul style="margin-left:20px">
+            <li style="margin-bottom:8px"><strong>清洗输入：</strong>不要将不受信任的输入直接传递给 MarkItDown，需先验证和限制</li>
+            <li style="margin-bottom:8px"><strong>使用最窄的 API：</strong>
+                <ul style="margin-left:20px;margin-top:4px">
+                    <li>仅需本地文件？用 <code>convert_local()</code></li>
+                    <li>需要控制 URI 获取？自己调用 <code>requests.get()</code> 再传 <code>convert_response()</code></li>
+                    <li>最大控制？打开流后用 <code>convert_stream()</code></li>
+                </ul>
+            </li>
+            <li style="margin-bottom:8px"><strong>MCP 服务器安全：</strong>默认绑定 localhost，无身份验证，不要绑定到公网接口</li>
+            <li style="margin-bottom:8px"><strong>限制访问：</strong>包括限制文件路径、限制 URI 方案和网络目标、阻止访问私有/回环/元数据地址</li>
+        </ul>
+    </div>
+</section>
+
+<!-- 包结构 -->
+<section id="packages">
+    <div class="section-title"><span class="icon">📦</span> 项目包结构</div>
+
+    <div class="card">
+        <table>
+            <thead>
+                <tr><th>包名</th><th>说明</th><th>安装命令</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>markitdown</strong></td>
+                    <td>核心包，文件转 Markdown</td>
+                    <td><code>pip install 'markitdown[all]'</code></td>
+                </tr>
+                <tr>
+                    <td><strong>markitdown-mcp</strong></td>
+                    <td>MCP 服务器（STDIO/HTTP/SSE）</td>
+                    <td><code>pip install markitdown-mcp</code></td>
+                </tr>
+                <tr>
+                    <td><strong>markitdown-ocr</strong></td>
+                    <td>OCR 插件（LLM Vision）</td>
+                    <td><code>pip install markitdown-ocr</code></td>
+                </tr>
+                <tr>
+                    <td><strong>markitdown-sample-plugin</strong></td>
+                    <td>示例插件（RTF 格式）</td>
+                    <td><code>pip install markitdown-sample-plugin</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>目录结构</h3>
+        <pre><code>markitdown/
+├── packages/
+│   ├── markitdown/                  # 核心包
+│   │   ├── src/markitdown/
+│   │   │   ├── __init__.py          # 公共 API 导出
+│   │   │   ├── __main__.py          # CLI 入口
+│   │   │   ├── _markitdown.py       # MarkItDown 主类
+│   │   │   ├── _base_converter.py   # 转换器基类
+│   │   │   ├── _stream_info.py      # 流元数据
+│   │   │   ├── _uri_utils.py        # URI 工具
+│   │   │   ├── _exceptions.py       # 异常定义
+│   │   │   ├── converters/          # 内置转换器
+│   │   │   │   ├── _pdf_converter.py
+│   │   │   │   ├── _docx_converter.py
+│   │   │   │   ├── _pptx_converter.py
+│   │   │   │   ├── _xlsx_converter.py
+│   │   │   │   ├── _html_converter.py
+│   │   │   │   ├── _image_converter.py
+│   │   │   │   ├── _audio_converter.py
+│   │   │   │   ├── _cu_converter.py
+│   │   │   │   ├── _doc_intel_converter.py
+│   │   │   │   └── ...              # 更多转换器
+│   │   │   └── converter_utils/     # 转换辅助工具
+│   │   └── tests/                   # 测试
+│   ├── markitdown-mcp/              # MCP 服务器
+│   │   └── src/markitdown_mcp/
+│   │       └── __main__.py          # MCP 服务入口
+│   ├── markitdown-ocr/              # OCR 插件
+│   │   └── src/markitdown_ocr/
+│   │       ├── _plugin.py           # 插件注册
+│   │       ├── _ocr_service.py      # OCR 服务
+│   │       ├── _pdf_converter_with_ocr.py
+│   │       ├── _docx_converter_with_ocr.py
+│   │       ├── _pptx_converter_with_ocr.py
+│   │       └── _xlsx_converter_with_ocr.py
+│   └── markitdown-sample-plugin/    # 示例插件
+│       └── src/markitdown_sample_plugin/
+│           ├── _plugin.py           # 插件注册
+│           └── __init__.py
+├── Dockerfile                       # Docker 构建
+├── README.md
+└── LICENSE                          # MIT 许可</code></pre>
+    </div>
+
+    <div class="card">
+        <h3>开发与测试</h3>
+        <pre><code>cd packages/markitdown
+
+# 安装 hatch
+pip install hatch
+
+# 进入开发环境
+hatch shell
+
+# 运行测试
+hatch test
+
+# 运行 pre-commit 检查
+pre-commit run --all-files
+
+# 类型检查
+hatch run types:check</code></pre>
+    </div>
+</section>
+
+</div>
+
+<div class="footer">
+    <p>MarkItDown · Microsoft AutoGen Team · MIT License</p>
+    <p style="margin-top:4px">基于项目源码自动生成 · v0.1.6b2</p>
+</div>
+
+<script>
+function switchTab(tabsId, contentId) {
+    const tabBar = event.target.closest('.tab-bar');
+    const panel = tabBar.nextElementSibling;
+    tabBar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    panel.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(contentId).classList.add('active');
+}
+
+document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.onclick = () => {
+        const code = pre.querySelector('code') ? pre.querySelector('code').textContent : pre.textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 1500);
+        });
+    };
+    pre.appendChild(btn);
+});
+</script>
+
+</body>
+</html>
